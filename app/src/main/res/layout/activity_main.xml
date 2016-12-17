@@ -1,32 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.joke.autobanner.MainActivity">
 
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp0"
+    <LinearLayout
+        android:id="@+id/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:clipToPadding="false"
-        android:paddingEnd="40dp"
-        android:paddingStart="40dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp1"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-    />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp0"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:clipToPadding="false"
+            android:paddingEnd="40dp"
+            android:paddingStart="40dp">
 
-    <com.joke.autobanner.AutoViewPager
-        android:id="@+id/vp2"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-   />
+            <android.support.v4.view.PagerTabStrip
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </android.support.v4.view.ViewPager>
 
 
-</LinearLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp1"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <com.joke.autobanner.widget.IndicatorLayout
+            android:id="@+id/il1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            app:dotHeight="10dp"
+            app:dotWidth="20dp"
+            app:indicatorColor="#ff66ff66" />
+
+        <com.joke.autobanner.widget.AutoViewPager
+            android:id="@+id/vp2"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <com.joke.autobanner.widget.IndicatorLayout
+            android:id="@+id/il2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+</ScrollView>

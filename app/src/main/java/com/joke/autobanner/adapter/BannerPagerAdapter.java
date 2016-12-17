@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.joke.autobanner.BR;
-import com.joke.autobanner.BaseAutoAdapter;
+import com.joke.autobanner.widget.BaseAutoAdapter;
 import com.joke.autobanner.R;
 import com.joke.autobanner.bean.BannerBean;
 
@@ -67,5 +67,8 @@ public class BannerPagerAdapter extends BaseAutoAdapter {
         return couponList.size();
     }
 
-
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return position+"";
+    }
 }

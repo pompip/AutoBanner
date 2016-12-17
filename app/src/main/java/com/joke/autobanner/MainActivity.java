@@ -11,6 +11,7 @@ import com.joke.autobanner.anim.MarginPageTransformer;
 import com.joke.autobanner.anim.ZoomOutPageTransformer;
 import com.joke.autobanner.bean.BannerBean;
 import com.joke.autobanner.bean.SlowScroller;
+import com.joke.autobanner.widget.IndicatorLayout;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -23,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private BannerPagerAdapter adapter0;
     private BannerPagerAdapter adapter1;
     private BannerPagerAdapter adapter2;
-    private static final String TAG = "MainActivity";
+    private IndicatorLayout il1;
+    private IndicatorLayout il2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         vp0 = (ViewPager) findViewById(R.id.vp0);
         vp1 = (ViewPager) findViewById(R.id.vp1);
         vp2 = (ViewPager) findViewById(R.id.vp2);
+        il1 = (IndicatorLayout) findViewById(R.id.il1);
+        il2 = (IndicatorLayout) findViewById(R.id.il2);
+        il1.setUpWithViewPager(vp1);
 
         setViewPagerScrollSpeed();
         adapter0 = new BannerPagerAdapter(vp0);
@@ -47,8 +52,17 @@ public class MainActivity extends AppCompatActivity {
         vp1.setPageTransformer(true, new DepthPageTransformer());
         adapter1.addPagerData(Arrays.asList(new BannerBean(), new BannerBean(), new BannerBean()));
         vp2.setAdapter(adapter2);
+
         vp2.setPageTransformer(true, new ZoomOutPageTransformer());
         adapter2.addPagerData(Arrays.asList(new BannerBean(), new BannerBean(), new BannerBean()));
+        vp2.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                il2.toPosition(position);
+            }
+        });
+
     }
 
     @Override
@@ -62,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         adapter0.stopTurning();
     }
+
+    private static final String TAG = "MainActivity";
 
     /**
      * 更改viewpager 中Scroll对象,修改滚动速度

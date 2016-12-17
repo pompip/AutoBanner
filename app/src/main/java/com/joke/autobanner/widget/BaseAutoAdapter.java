@@ -1,4 +1,4 @@
-package com.joke.autobanner;
+package com.joke.autobanner.widget;
 
 import android.databinding.ViewDataBinding;
 import android.os.Handler;

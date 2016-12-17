@@ -10,5 +10,5 @@
 * 待续
 
 ## indicator
-
-* 待续
+* 自定义IndicatorLayout 通过属性动画实现indicator移动.
+* 或者与ViewPager关联,通过offset移动指示点.
