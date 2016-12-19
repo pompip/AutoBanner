@@ -1,9 +1,17 @@
 package com.joke.autobanner;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterViewFlipper;
+import android.widget.BaseAdapter;
 
 import com.joke.autobanner.adapter.BannerPagerAdapter;
 import com.joke.autobanner.anim.DepthPageTransformer;
@@ -63,6 +71,64 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initAVF();
+    }
+
+    private void initAVF(){
+        AdapterViewFlipper  avf = (AdapterViewFlipper)findViewById(R.id.avf);
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return 4;
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return position;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                ViewDataBinding inflate ;
+                if (convertView==null){
+                    inflate =   DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_pager_banner, parent, false);
+                    convertView = inflate.getRoot();
+                    convertView.setTag(inflate);
+                }else {
+                 inflate = (ViewDataBinding) convertView.getTag();
+                }
+                BannerBean value = new BannerBean();
+                value.setInfo(""+position);
+                inflate.setVariable(BR.banner, value);
+
+
+                return convertView;
+            }
+        };
+
+
+        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("x",0- getResources().getDimension(R.dimen.dp360),0);
+        PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofFloat("alpha", 0, 1);
+        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", 0, 1);
+        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", 0, 1);
+
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder, alphaHolder, scaleXHolder,scaleYHolder).setDuration(1000);
+
+        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("x",0,getResources().getDimension(R.dimen.dp360));
+        PropertyValuesHolder alphaHolder1 = PropertyValuesHolder.ofFloat("alpha", 1, 0);
+        PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", 1, 0);
+        PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", 1, 0);
+
+        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder1, alphaHolder1, scaleXHolder1,scaleYHolder1).setDuration(1000);
+
+        avf.setInAnimation(animator);
+        avf.setOutAnimation(animator1);
+        avf.setAdapter(baseAdapter);
     }
 
     @Override

@@ -7,6 +7,8 @@
     tools:context="com.joke.autobanner.MainActivity">
 
     <LinearLayout
+        android:paddingTop="20dp"
+        android:paddingBottom="50dp"
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,6 +56,33 @@
             android:layout_gravity="center_horizontal"
             android:padding="10dp" />
 
+        <ViewFlipper
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoStart="true"
+            android:clipChildren="false"
+            android:inAnimation="@anim/flipper_in2"
+            android:outAnimation="@anim/flipper_out2">
+
+            <include layout="@layout/item_pager_banner" />
+
+            <include layout="@layout/item_pager_banner" />
+
+            <include layout="@layout/item_pager_banner" />
+        </ViewFlipper>
+
+        <AdapterViewFlipper
+            android:id="@+id/avf"
+            android:flipInterval="2000"
+
+            android:layout_width="match_parent"
+            android:autoStart="true"
+            android:layout_height="wrap_content">
+
+        </AdapterViewFlipper>
+        <!--android:inAnimation="@animator/adapter_flipper_in"-->
+        <!--android:outAnimation="@animator/adapter_flipper_out"-->
     </LinearLayout>
 
 </ScrollView>
