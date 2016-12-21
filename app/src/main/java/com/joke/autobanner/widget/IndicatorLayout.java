@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.ColorInt;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,6 +33,14 @@ public class IndicatorLayout extends ViewGroup {
     private LayoutParams indicatorParams;
     private int indicatorColor = 0xffff6666;
     private int normalColor = 0xff999999;
+
+    private DataSetObserver observer = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            initTotal();
+        }
+    };
+    private PagerAdapter adapter;
 
     public IndicatorLayout(Context context) {
         this(context, null);
@@ -83,9 +93,12 @@ public class IndicatorLayout extends ViewGroup {
      * 与viewPager关联移动指示点
      */
     public void setUpWithViewPager(ViewPager viewPager) {
-        PagerAdapter adapter = viewPager.getAdapter();
-        if (adapter instanceof BaseAutoAdapter) {
-            mTotal = ((BaseAutoAdapter) adapter).getMaxCount();
+        adapter = viewPager.getAdapter();
+        if (adapter == null) {
+            Log.e(TAG, "setUpWithViewPager: you show setPagerAdapter first!" );
+        } else {
+            adapter.registerDataSetObserver(observer);
+            initTotal();
         }
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -95,6 +108,17 @@ public class IndicatorLayout extends ViewGroup {
         });
     }
 
+    private void initTotal() {
+        if (adapter != null) {
+            if (adapter instanceof BaseAutoAdapter) {
+                mTotal = ((BaseAutoAdapter) adapter).getMaxCount();
+            } else {
+                mTotal = adapter.getCount();
+            }
+            setTotal(mTotal);
+
+        }
+    }
     /**
      * 通过位置和偏移量移动指示点
      */

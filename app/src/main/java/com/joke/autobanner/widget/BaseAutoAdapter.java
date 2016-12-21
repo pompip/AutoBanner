@@ -56,6 +56,7 @@ public abstract class BaseAutoAdapter extends PagerAdapter implements Handler.Ca
         maxCount = getMaxCount();
         if (maxCount == 0) {
             maxCount = 1;
+            return 0;
         }
         return Integer.MAX_VALUE;
     }

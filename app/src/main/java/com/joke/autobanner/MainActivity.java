@@ -20,6 +20,7 @@ import com.joke.autobanner.anim.ZoomOutPageTransformer;
 import com.joke.autobanner.bean.BannerBean;
 import com.joke.autobanner.bean.SlowScroller;
 import com.joke.autobanner.widget.IndicatorLayout;
+import com.joke.autobanner.widget.IndicatorView;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private BannerPagerAdapter adapter2;
     private IndicatorLayout il1;
     private IndicatorLayout il2;
+    private IndicatorView itv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         il1 = (IndicatorLayout) findViewById(R.id.il1);
         il2 = (IndicatorLayout) findViewById(R.id.il2);
         il1.setUpWithViewPager(vp1);
+        itv = (IndicatorView)findViewById(R.id.itv);
 
         setViewPagerScrollSpeed();
         adapter0 = new BannerPagerAdapter(vp0);
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 il2.toPosition(position);
+//                itv.setCurrentPosition(position);
+                itv.startAni(position);
             }
         });
 
