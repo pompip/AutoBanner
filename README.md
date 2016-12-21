@@ -11,5 +11,11 @@
 * xml中做ObjectAnimator有点蛋疼,研究中,待续.
 
 ## indicator
+> IndicatorLayout
+* 仿照TabLayout 方式,定义内部类View画圆点
 * 自定义IndicatorLayout 通过属性动画实现indicator移动.
 * 或者与ViewPager关联,通过offset移动指示点.
+
+> IndicatorView
+* 重写View,用canvas画圆点
+* 通过Scroller 和View.invalidate()方法,绘制动画.
