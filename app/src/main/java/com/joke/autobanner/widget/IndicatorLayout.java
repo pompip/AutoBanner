@@ -25,8 +25,8 @@ import com.joke.autobanner.R;
 
 public class IndicatorLayout extends ViewGroup {
     private static final String TAG = "IndicatorLayout";
-    private int childWidth = 60;
-    private int childHeight = 30;
+    private int dotGap = 60;
+    private int dotRadius = 15;
     private int mTotal = 3;
     private int currentPosition;
     private DotView indicator;
@@ -49,19 +49,20 @@ public class IndicatorLayout extends ViewGroup {
 
     public IndicatorLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IndicatorLayout);
-        indicatorColor = a.getColor(R.styleable.IndicatorLayout_indicatorColor, indicatorColor);
-        normalColor = a.getColor(R.styleable.IndicatorLayout_normalColor, normalColor);
-        mTotal = a.getInt(R.styleable.IndicatorLayout_total, mTotal);
-        childWidth = a.getDimensionPixelSize(R.styleable.IndicatorLayout_dotWidth, childWidth);
-        childHeight = a.getDimensionPixelSize(R.styleable.IndicatorLayout_dotHeight, childHeight);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Indicator);
+        indicatorColor = a.getColor(R.styleable.Indicator_indicatorColor, indicatorColor);
+        normalColor = a.getColor(R.styleable.Indicator_normalColor, normalColor);
+        mTotal = a.getInt(R.styleable.Indicator_total, mTotal);
+        dotGap = a.getDimensionPixelSize(R.styleable.Indicator_dotGap, dotGap);
+        dotRadius = a.getDimensionPixelSize(R.styleable.Indicator_dotRadius, dotRadius);
         a.recycle();
         setClipToPadding(false);
         indicator = new DotView(context);
         indicator.setColor(indicatorColor);
-        indicatorParams = new LayoutParams(childWidth, childHeight);
+        indicatorParams = new LayoutParams(dotGap, dotRadius * 2);
         setTotal(mTotal);
     }
+
     /**
      * 总个数
      */
@@ -71,7 +72,7 @@ public class IndicatorLayout extends ViewGroup {
         for (int i = 0; i < total; i++) {
             DotView dotView = new DotView(getContext());
             dotView.setColor(normalColor);
-            addViewInLayout(dotView, i, new LayoutParams(childWidth, childHeight), true);
+            addViewInLayout(dotView, i, new LayoutParams(dotGap, dotRadius * 2), true);
         }
     }
 
@@ -83,10 +84,10 @@ public class IndicatorLayout extends ViewGroup {
         if (oldPosition == 0 && currentPosition == mTotal - 1) {
             ObjectAnimator.ofFloat(indicator, "x", 0, getPaddingLeft()).start();
         } else if (oldPosition == mTotal - 1 && currentPosition == 0) {
-            ObjectAnimator.ofFloat(indicator, "x", getWidth(), getPaddingRight() + childWidth).start();
+            ObjectAnimator.ofFloat(indicator, "x", getWidth(), getPaddingRight() + dotGap).start();
         }
         currentPosition = oldPosition;
-        indicator.animate().x(getPaddingLeft() + childWidth * currentPosition).start();
+        indicator.animate().x(getPaddingLeft() + dotGap * currentPosition).start();
     }
 
     /**
@@ -95,7 +96,7 @@ public class IndicatorLayout extends ViewGroup {
     public void setUpWithViewPager(ViewPager viewPager) {
         adapter = viewPager.getAdapter();
         if (adapter == null) {
-            Log.e(TAG, "setUpWithViewPager: you show setPagerAdapter first!" );
+            Log.e(TAG, "setUpWithViewPager: you show setPagerAdapter first!");
         } else {
             adapter.registerDataSetObserver(observer);
             initTotal();
@@ -119,6 +120,7 @@ public class IndicatorLayout extends ViewGroup {
 
         }
     }
+
     /**
      * 通过位置和偏移量移动指示点
      */
@@ -128,19 +130,19 @@ public class IndicatorLayout extends ViewGroup {
             currentPosition = 0;
             positionOffset = positionOffset - 1;
         }
-        indicator.setTranslationX((currentPosition + positionOffset) * childWidth);
+        indicator.setTranslationX((currentPosition + positionOffset) * dotGap);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
         for (int i = 0, n = getChildCount(); i < n; i++) {
-            getChildAt(i).layout(getPaddingLeft() + childWidth * i, getPaddingTop()
-                    , getPaddingLeft() + childWidth * (i + 1), childHeight + getPaddingTop());
+            getChildAt(i).layout(getPaddingLeft() + dotGap * i, getPaddingTop()
+                    , getPaddingLeft() + dotGap * (i + 1), dotRadius * 2 + getPaddingTop());
         }
         addViewInLayout(indicator, -1, indicatorParams);
-        indicator.layout(getPaddingLeft() + childWidth * currentPosition, getPaddingTop()
-                , getPaddingLeft() + childWidth * (currentPosition + 1), childHeight + getPaddingTop());
+        indicator.layout(getPaddingLeft() + dotGap * currentPosition, getPaddingTop()
+                , getPaddingLeft() + dotGap * (currentPosition + 1), dotRadius * 2 + getPaddingTop());
 
     }
 
@@ -149,13 +151,13 @@ public class IndicatorLayout extends ViewGroup {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         if (widthMode != MeasureSpec.EXACTLY) {
-            width = childWidth * mTotal;
+            width = dotGap * mTotal;
         }
 
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         if (heightMode != MeasureSpec.EXACTLY) {
-            height = childHeight;
+            height = dotRadius * 2;
         }
         setMeasuredDimension(width + getPaddingLeft() + getPaddingRight(), height + getPaddingTop() + getPaddingBottom());
     }

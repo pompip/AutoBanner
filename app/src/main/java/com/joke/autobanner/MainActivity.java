@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterViewFlipper;
@@ -28,13 +31,8 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager vp0;
-    private ViewPager vp1;
-    private ViewPager vp2;
     private BannerPagerAdapter adapter0;
-    private BannerPagerAdapter adapter1;
-    private BannerPagerAdapter adapter2;
     private IndicatorLayout il1;
-    private IndicatorLayout il2;
     private IndicatorView itv;
 
     @Override
@@ -43,34 +41,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         vp0 = (ViewPager) findViewById(R.id.vp0);
-        vp1 = (ViewPager) findViewById(R.id.vp1);
-        vp2 = (ViewPager) findViewById(R.id.vp2);
         il1 = (IndicatorLayout) findViewById(R.id.il1);
-        il2 = (IndicatorLayout) findViewById(R.id.il2);
-        il1.setUpWithViewPager(vp1);
-        itv = (IndicatorView)findViewById(R.id.itv);
-
+        itv = (IndicatorView) findViewById(R.id.itv);
         setViewPagerScrollSpeed();
         adapter0 = new BannerPagerAdapter(vp0);
-        adapter1 = new BannerPagerAdapter(vp1);
-        adapter2 = new BannerPagerAdapter(vp2);
-
         adapter0.addPagerData(Arrays.asList(new BannerBean(), new BannerBean(), new BannerBean()));
         vp0.setAdapter(adapter0);
-
         vp0.setPageTransformer(true, new MarginPageTransformer());
-        vp1.setAdapter(adapter1);
-        vp1.setPageTransformer(true, new DepthPageTransformer());
-        adapter1.addPagerData(Arrays.asList(new BannerBean(), new BannerBean(), new BannerBean()));
-        vp2.setAdapter(adapter2);
+        vp0.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                il1.toPositionWithOffset(position,positionOffset);
+            }
 
-        vp2.setPageTransformer(true, new ZoomOutPageTransformer());
-        adapter2.addPagerData(Arrays.asList(new BannerBean(), new BannerBean(), new BannerBean()));
-        vp2.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                il2.toPosition(position);
 //                itv.setCurrentPosition(position);
                 itv.startAni(position);
             }
@@ -79,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         initAVF();
     }
 
-    private void initAVF(){
-        AdapterViewFlipper  avf = (AdapterViewFlipper)findViewById(R.id.avf);
+    private void initAVF() {
+        AdapterViewFlipper avf = (AdapterViewFlipper) findViewById(R.id.avf);
         BaseAdapter baseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -99,16 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                ViewDataBinding inflate ;
-                if (convertView==null){
-                    inflate =   DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_pager_banner, parent, false);
+                ViewDataBinding inflate;
+                if (convertView == null) {
+                    inflate = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_pager_banner, parent, false);
                     convertView = inflate.getRoot();
                     convertView.setTag(inflate);
-                }else {
-                 inflate = (ViewDataBinding) convertView.getTag();
+                } else {
+                    inflate = (ViewDataBinding) convertView.getTag();
                 }
                 BannerBean value = new BannerBean();
-                value.setInfo(""+position);
+                value.setInfo("" + position);
                 inflate.setVariable(BR.banner, value);
 
 
@@ -117,19 +103,19 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("x",0- getResources().getDimension(R.dimen.dp360),0);
+        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("x", 0 - getResources().getDimension(R.dimen.dp360), 0);
         PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofFloat("alpha", 0, 1);
         PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", 0, 1);
         PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", 0, 1);
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder, alphaHolder, scaleXHolder,scaleYHolder).setDuration(1000);
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(), xHolder, alphaHolder, scaleXHolder, scaleYHolder).setDuration(1000);
 
-        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("x",0,getResources().getDimension(R.dimen.dp360));
+        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("x", 0, getResources().getDimension(R.dimen.dp360));
         PropertyValuesHolder alphaHolder1 = PropertyValuesHolder.ofFloat("alpha", 1, 0);
         PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", 1, 0);
         PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", 1, 0);
 
-        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder1, alphaHolder1, scaleXHolder1,scaleYHolder1).setDuration(1000);
+        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(), xHolder1, alphaHolder1, scaleXHolder1, scaleYHolder1).setDuration(1000);
 
         avf.setInAnimation(animator);
         avf.setOutAnimation(animator1);
@@ -140,6 +126,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         adapter0.startTurning();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("DepthPageTransformer");
+        menu.add("ZoomOutPageTransformer");
+        menu.add("MarginPageTransformer");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int dp40 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        if (item.getTitle().equals("DepthPageTransformer")) {
+            vp0.setPageTransformer(true, new DepthPageTransformer());
+            vp0.setClipToPadding(true);
+            vp0.setPadding(0,0,0,0);
+        } else if (item.getTitle().equals("MarginPageTransformer")) {
+            vp0.setPageTransformer(true, new MarginPageTransformer());
+            vp0.setClipToPadding(false);
+            vp0.setPadding(dp40,0,dp40,0);
+        }else if (item.getTitle().equals("ZoomOutPageTransformer")){
+            vp0.setPageTransformer(true, new ZoomOutPageTransformer());
+            vp0.setClipToPadding(true);
+            vp0.setPadding(0,0,0,0);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -158,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             Field mScroller = ViewPager.class.getDeclaredField("mScroller");
             mScroller.setAccessible(true);
             SlowScroller scroller = new SlowScroller(vp0.getContext());
-            mScroller.set(vp1, scroller);
+            mScroller.set(vp0, scroller);
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             Log.e(TAG, "setViewPagerScrollSpeed: ", e);
         }

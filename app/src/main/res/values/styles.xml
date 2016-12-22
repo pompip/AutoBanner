@@ -8,12 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <declare-styleable name="IndicatorLayout">
+    <declare-styleable name="Indicator">
         <attr name="indicatorColor" format="color" />
         <attr name="normalColor" format="color" />
         <attr name="total" format="integer" />
-        <attr name="dotWidth" format="dimension"/>
-        <attr name="dotHeight" format="dimension"/>
+        <attr name="dotGap" format="dimension"/>
+        <attr name="dotRadius" format="dimension"/>
     </declare-styleable>
 
 </resources>

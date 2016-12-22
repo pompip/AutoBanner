@@ -1,6 +1,7 @@
 package com.joke.autobanner.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v4.view.ViewCompat;
@@ -9,15 +10,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Scroller;
 
+import com.joke.autobanner.R;
+
 /**
  * Created by SHF on 2016/12/21.
  */
 
 public class IndicatorView extends View {
 
-    private int childWidth = 60;
-    private int childHeight = 30;
-    private int mTotal = 13;
+    private int dotGap = 60;
+    private int dotRadius = 15;
+    private int mTotal = 4;
     private int currentPosition = 0;
     private int indicatorColor = 0xffff6666;
     private int normalColor = 0xff999999;
@@ -28,54 +31,60 @@ public class IndicatorView extends View {
     Scroller scroller;
 
     public IndicatorView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public IndicatorView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Indicator);
+        indicatorColor = a.getColor(R.styleable.Indicator_indicatorColor, indicatorColor);
+        normalColor = a.getColor(R.styleable.Indicator_normalColor, normalColor);
+        mTotal = a.getInt(R.styleable.Indicator_total, mTotal);
+        dotGap = a.getDimensionPixelSize(R.styleable.Indicator_dotGap, dotGap);
+        dotRadius = a.getDimensionPixelSize(R.styleable.Indicator_dotRadius, dotRadius);
+        a.recycle();
+
         normalPaint = new Paint();
         indicatorPaint = new Paint();
         scroller = new Scroller(getContext());
+
+        normalPaint.setColor(normalColor);
+        indicatorPaint.setColor(indicatorColor);
     }
 
-    public IndicatorView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         if (widthMode != MeasureSpec.EXACTLY) {
-            width = childWidth * mTotal;
+            width = dotGap * mTotal;
         }
 
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         if (heightMode != MeasureSpec.EXACTLY) {
-            height = childHeight;
+            height = dotRadius * 2;
         }
         setMeasuredDimension(width + getPaddingLeft() + getPaddingRight(), height + getPaddingTop() + getPaddingBottom());
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        int min = Math.min(childWidth, childHeight);
         for (int i = 0; i < mTotal; i++) {
-
-            normalPaint.setColor(normalColor);
-            canvas.drawCircle(getPaddingLeft()+childWidth / 2 + childWidth * i, childHeight / 2, min / 2, normalPaint);
+            drawCircle(canvas, normalPaint, dotGap / 2 + dotGap * i);
         }
-        indicatorPaint.setColor(indicatorColor);
 
         if (scroller != null && scroller.computeScrollOffset()) {
-            Log.e(TAG, "onDraw: " + scroller.getCurrX());
-            canvas.drawCircle(getPaddingLeft()+childWidth * 0.5f + scroller.getCurrX(), childHeight / 2, min / 2, indicatorPaint);
+            drawCircle(canvas, indicatorPaint, dotGap * 0.5f + scroller.getCurrX());
             invalidate();
         } else {
-            canvas.drawCircle(getPaddingLeft()+childWidth * (0.5f + currentPosition), childHeight / 2, min / 2, indicatorPaint);
+            drawCircle(canvas, indicatorPaint, dotGap * (0.5f + currentPosition));
         }
+    }
+
+    private void drawCircle(Canvas canvas, Paint paint, float p) {
+        canvas.drawCircle(getPaddingLeft() + p, getPaddingTop() + dotRadius, dotRadius, paint);
     }
 
 
@@ -87,14 +96,23 @@ public class IndicatorView extends View {
 
     public void startAni(int position) {
         position = position % mTotal;
-        scroller.startScroll(childWidth * currentPosition, 0, (position-currentPosition)*childWidth, 0, 1000);
+
+        int direction = position - currentPosition;
+        int originalPosition = dotGap * currentPosition;
+        if (position == 0 && currentPosition == mTotal - 1) {
+            direction = 1;
+            originalPosition = -dotGap;
+        } else if (position == mTotal - 1 && currentPosition == 0) {
+            direction = -1;
+            originalPosition = mTotal * dotGap;
+        }
+        scroller.startScroll(originalPosition, 0, direction * dotGap, 0, 1000);
         currentPosition = position;
         invalidate();
     }
 
-    @Override
-    public void computeScroll() {
-        super.computeScroll();
+    public void setCurrentPositionOffset(int position, float offset) {
+
     }
 
 
