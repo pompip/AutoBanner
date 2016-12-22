@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Scroller;
 
@@ -40,8 +41,8 @@ public class IndicatorView extends View {
         indicatorColor = a.getColor(R.styleable.Indicator_indicatorColor, indicatorColor);
         normalColor = a.getColor(R.styleable.Indicator_normalColor, normalColor);
         mTotal = a.getInt(R.styleable.Indicator_total, mTotal);
-        dotGap = a.getDimensionPixelSize(R.styleable.Indicator_dotGap, dotGap);
-        dotRadius = a.getDimensionPixelSize(R.styleable.Indicator_dotRadius, dotRadius);
+        dotGap = a.getDimensionPixelSize(R.styleable.Indicator_dotGap, dp2px(20));
+        dotRadius = a.getDimensionPixelSize(R.styleable.Indicator_dotRadius, dp2px(5));
         a.recycle();
 
         normalPaint = new Paint();
@@ -113,6 +114,10 @@ public class IndicatorView extends View {
 
     public void setCurrentPositionOffset(int position, float offset) {
 
+    }
+
+    private int dp2px(float dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 
 
