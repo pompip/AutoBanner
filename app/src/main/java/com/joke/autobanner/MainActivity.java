@@ -103,19 +103,20 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("x", 0 - getResources().getDimension(R.dimen.dp360), 0);
-        PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofFloat("alpha", 0, 1);
-        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", 0, 1);
-        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", 0, 1);
+        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("y", 0 - getResources().getDimension(R.dimen.dp360), 0);
+        PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofFloat("alpha", 0.5f, 1);
+        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", 0.5f, 1);
+        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", 0.5f, 1);
+        PropertyValuesHolder rotationX = PropertyValuesHolder.ofFloat("rotationX",45,0);
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder, alphaHolder, scaleXHolder, scaleYHolder,rotationX).setDuration(1000);
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(), xHolder, alphaHolder, scaleXHolder, scaleYHolder).setDuration(1000);
+        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("y", 0, getResources().getDimension(R.dimen.dp360));
+        PropertyValuesHolder alphaHolder1 = PropertyValuesHolder.ofFloat("alpha", 1, 0.5f);
+        PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", 1, 0.5f);
+        PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", 1, 0.5f);
+        PropertyValuesHolder rotationX1 = PropertyValuesHolder.ofFloat("rotationX",0,-45);
 
-        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("x", 0, getResources().getDimension(R.dimen.dp360));
-        PropertyValuesHolder alphaHolder1 = PropertyValuesHolder.ofFloat("alpha", 1, 0);
-        PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", 1, 0);
-        PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", 1, 0);
-
-        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(), xHolder1, alphaHolder1, scaleXHolder1, scaleYHolder1).setDuration(1000);
+        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder1, alphaHolder1, scaleXHolder1, scaleYHolder1,rotationX1).setDuration(1000);
 
         avf.setInAnimation(animator);
         avf.setOutAnimation(animator1);
