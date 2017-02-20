@@ -10,10 +10,11 @@
     </data>
 
     <FrameLayout
-
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
         android:layout_width="match_parent"
         android:layout_height="111dp"
-        android:background="#4fcb95"
+        android:background="#fff"
         android:padding="16dp">
 
         <LinearLayout

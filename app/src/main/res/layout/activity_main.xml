@@ -63,16 +63,23 @@
         </ViewFlipper>
 
         <AdapterViewFlipper
+            android:background="#fff"
             android:id="@+id/avf"
             android:layout_width="match_parent"
 
-            android:layout_height="wrap_content"
+            android:layout_height="111dp"
             android:autoStart="true"
             android:flipInterval="2000">
 
         </AdapterViewFlipper>
         <!--android:inAnimation="@animator/adapter_flipper_in"-->
         <!--android:outAnimation="@animator/adapter_flipper_out"-->
+
+        <ImageView
+            android:id="@+id/iv"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

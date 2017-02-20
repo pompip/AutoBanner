@@ -2,6 +2,7 @@ package com.joke.autobanner;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.TypeEvaluator;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -13,8 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterViewFlipper;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.joke.autobanner.adapter.BannerPagerAdapter;
 import com.joke.autobanner.anim.DepthPageTransformer;
@@ -34,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private BannerPagerAdapter adapter0;
     private IndicatorLayout il1;
     private IndicatorView itv;
+    private View iv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        iv = findViewById(R.id.iv);
+        setRotate();
         vp0 = (ViewPager) findViewById(R.id.vp0);
         il1 = (IndicatorLayout) findViewById(R.id.il1);
         itv = (IndicatorView) findViewById(R.id.itv);
@@ -63,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         initAVF();
+
     }
 
     private void initAVF() {
@@ -103,20 +111,72 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("y", 0 - getResources().getDimension(R.dimen.dp360), 0);
+        final float dimension = getResources().getDimension(R.dimen.dp360);
+        float sqrt = (float) Math.sqrt(3);
+        PropertyValuesHolder xHolder = PropertyValuesHolder.ofFloat("y", (float) Math.PI/2, 0);
+        xHolder.setEvaluator(new TypeEvaluator<Float>() {
+            @Override
+            public Float evaluate(float fraction, Float startValue, Float endValue) {
+                float s = (float)startValue;
+                float e = (float)endValue;
+                float v = (float) (Math.sin(s + (e - s) * fraction) * dimension);
+                return -v/2;
+            }
+        });
+
         PropertyValuesHolder alphaHolder = PropertyValuesHolder.ofFloat("alpha", 0.5f, 1);
-        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", 0.5f, 1);
-        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", 0.5f, 1);
-        PropertyValuesHolder rotationX = PropertyValuesHolder.ofFloat("rotationX",45,0);
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder, alphaHolder, scaleXHolder, scaleYHolder,rotationX).setDuration(1000);
+        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX",-(float) Math.PI/4, (float) Math.PI/4);
+        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY",-(float) Math.PI/4, (float) Math.PI/4);
 
-        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("y", 0, getResources().getDimension(R.dimen.dp360));
+        TypeEvaluator<Float> evaluator = new TypeEvaluator<Float>() {
+            @Override
+            public Float evaluate(float fraction, Float startValue, Float endValue) {
+
+                float s = (float) (startValue );
+                float e = (float) (endValue );
+
+
+                float v = (float) ( Math.sqrt(2)*Math.cos(s + (e - s) * fraction));
+
+                Log.e(TAG, "evaluate: " +v+ "  :" + fraction +"  :"+Math.cos(s + (e - s) * fraction));
+                return 1f/v;
+            }
+        };
+
+
+        scaleXHolder.setEvaluator(evaluator);
+        scaleYHolder.setEvaluator(evaluator);
+
+
+        PropertyValuesHolder rotationX = PropertyValuesHolder.ofFloat("rotationX",90,0);
+
+
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),alphaHolder,xHolder, scaleXHolder,scaleYHolder,rotationX).setDuration(1000);
+        animator.setInterpolator(new LinearInterpolator());
+
+        PropertyValuesHolder xHolder1 = PropertyValuesHolder.ofFloat("y", 0,(float) Math.PI/2);
+        xHolder1.setEvaluator(new TypeEvaluator() {
+            @Override
+            public Object evaluate(float fraction, Object startValue, Object endValue) {
+                float s = (float)startValue;
+                float e = (float)endValue;
+                float v = (float) (Math.sin(s + (e - s) * fraction) * dimension);
+                return v/2;
+            }
+        });
         PropertyValuesHolder alphaHolder1 = PropertyValuesHolder.ofFloat("alpha", 1, 0.5f);
-        PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", 1, 0.5f);
-        PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", 1, 0.5f);
-        PropertyValuesHolder rotationX1 = PropertyValuesHolder.ofFloat("rotationX",0,-45);
+        PropertyValuesHolder scaleXHolder1 = PropertyValuesHolder.ofFloat("ScaleX", -(float) Math.PI/4, (float) Math.PI/4);
+        PropertyValuesHolder scaleYHolder1 = PropertyValuesHolder.ofFloat("ScaleY", -(float) Math.PI/4, (float) Math.PI/4);
+        scaleXHolder1.setEvaluator(evaluator);
+        scaleYHolder1.setEvaluator(evaluator);
 
-        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(),xHolder1, alphaHolder1, scaleXHolder1, scaleYHolder1,rotationX1).setDuration(1000);
+
+        PropertyValuesHolder rotationX1 = PropertyValuesHolder.ofFloat("rotationX",0,-90);
+
+        ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(new Object(),alphaHolder1,xHolder1, scaleXHolder1,scaleYHolder1 ,rotationX1).setDuration(1000);
+        animator1.setInterpolator(new LinearInterpolator());
+
+
 
         avf.setInAnimation(animator);
         avf.setOutAnimation(animator1);
@@ -176,6 +236,18 @@ public class MainActivity extends AppCompatActivity {
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             Log.e(TAG, "setViewPagerScrollSpeed: ", e);
         }
+    }
+
+    private  void setRotate(){
+
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setRotationX(-45);
+                Toast.makeText(MainActivity.this, ""+v.getX() +" :"+v.getY() , Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 }
